@@ -3,19 +3,27 @@
     <transition-group name="list" tag="ul">
         <li v-for="item in todos" :key="item.id">
           <input type="checkbox" v-model="item.modify" @click="onToggle(item.id)">
-          <label :for="item.id"><i :class="{'fa-solid':true, 'fa-pen-to-square':item.update, 'fa-floppy-disk':!item.update}" @click="onUpdate(item.id)"></i></label>
+          <label :for="item.id"><i :class="{'fa-solid':true, 'fa-pen-to-square':item.update, 'fa-floppy-disk':!item.update}" @click="onUpdate(item.id, item.update, item.text)"></i></label>
           {{ item.id }}번 <input :id="item.id" type="text" :class="{on:item.modify}" :value="item.text" :disabled="item.update" @input="onInput(item.id, $event)" />
           <button type="button" @click="onRemove(item.id)">
             <i class="fa-solid fa-trash-can"></i>
           </button>
         </li>
     </transition-group>
+    <transition name="modal">
+      <Modal v-if="showModal" />
+    </transition>
   </section>
 </template>
 
 <script>
+import Modal from "./Modal.vue"
+
 export default {
   name: "TodoList",
+  components:{
+    Modal : Modal
+  },
   computed:{
     todos(){
       return this.$store.getters.fnGetTodos
@@ -33,9 +41,13 @@ export default {
       // this.$emit("onToggle", id)
       this.$store.commit("on__Toggle", id)
     },
-    onUpdate(id){
+    onUpdate(id, update, text){
       // this.$emit("onUpdate", id)
-      this.$store.commit("on__Update", id)
+      if ( !text && !update ) {
+          this.$store.state.showModal = true
+      } else {
+        this.$store.commit("on__Update", id)        
+      }
     },
     onInput(id, e){
       // this.$emit("onInput", id, e.target.value)
@@ -73,5 +85,13 @@ export default {
     // transform:translateX(50px)
     transform:scale(0.5)
 }
+
+.modal-enter-active, .modal-leave-active { 
+  transition:all 0.5s
+}
+.modal-enter, .modal-leave-to { 
+  opacity:0;
+  transform:scale(0)
+ }
 
 </style>

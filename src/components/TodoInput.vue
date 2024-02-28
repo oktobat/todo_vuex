@@ -6,7 +6,9 @@
           <i class="fa-solid fa-plus"></i>
         </button>
       </form>
-      <Modal v-if="showModal" />
+      <transition name="modal">
+        <Modal v-if="showModal" />
+      </transition>
     </div>
 </template>
 
@@ -49,4 +51,11 @@ form { display: flex; height: 43px;
       color: #fff; }
     button { width: 56px; font-size:20px; background:#ddd }
 }
+.modal-enter-active, .modal-leave-active { 
+  transition:all 0.5s
+}
+.modal-enter, .modal-leave-to { 
+  opacity:0;
+  transform:scale(0)
+ }
 </style>
